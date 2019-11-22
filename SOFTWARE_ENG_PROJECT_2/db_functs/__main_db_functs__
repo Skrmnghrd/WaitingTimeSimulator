@@ -1,0 +1,22 @@
+class db_functions(__add__customer__, __add__cashier__):
+
+  def __init__(self):
+    """
+    Initialize the vars
+    """
+  def add_customer(self):
+    """
+    gets the parameters and adds customer to database
+    """
+    pass
+  def add_cashier(self):
+    """
+    adds_cashier to the database
+    """
+    pass
+  def get_customers(self):
+    """
+    gets the customer $select * from cust order by entry time
+    """
+    pass
+  def 
