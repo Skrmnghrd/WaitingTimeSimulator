@@ -10,7 +10,14 @@ from AddCashier import xAddCashier
 from Erradicator import xErradicator
 from QueCustomers import xQueCustomers
 from CloseTransaction import xCloseTransaction
-import sys
+
+
+
+#import sys
+#sys.path.insert(0, "Users/paulo/Desktop/SOFTWARE_ENG_PROJECT_2/simulator/")
+
+
+
 import random
 #from AddCashier import __AddCashier
 #from GetCustomers import  __getCustomers
@@ -23,7 +30,8 @@ class db_functions(xAddCustomer,
                    xErradicator, 
                    xGetCashiers,
                    xQueCustomers,
-                   xCloseTransaction
+                   xCloseTransaction,
+                   
 
                    ): #, __add_cashier__, __get__customers): 
   #don't forget to inehrit your heirloom
@@ -54,20 +62,14 @@ class db_functions(xAddCustomer,
       self.customers = kwargs['customers'] #tuple #how many cust (min, max) (80,150)
       self.operating_time = kwargs['time'] #tuple (min, max) (850, 1020) #for lazy reasons just convert it all to min. EG 8:30 (8 * 60) + 30
     except:
-
-      print("""\n
-      An Error Occured, please supply the corresponding arguments
-      self.waiting_time = kwargs['waiting_time'] #tuple (min, max) (2, 5)
-      self.cashier_amount = kwargs['cashiers'] #int how many cashiers
-      self.customers = kwargs['customers'] #tuple #how many cust (min, max) (80,150)
-      self.operating_time = kwargs['time'] #tuple (min, max) (850, 1020) #for lazy reasons just convert it all to min. EG 8:30 (8 * 60) + 30
-      """)
-    finally:
       self.waiting_time = 0 #tuple (min, max) (2, 5)
       self.cashier_amount = 0 #int how many cashiers
       self.customers = 0 
       self.operating_time = 0
-      
+
+
+    finally:
+      pass
     #don't touch this self.db since we're calling db.commit on sublibraries
 
     self.cur = self.db.cursor()   
@@ -79,6 +81,7 @@ class db_functions(xAddCustomer,
     xGetCashiers.__init__(self, self.cur)
     xQueCustomers.__init__(self, self.cur)
     xCloseTransaction.__init__(self, self.cur)
+    #xSimulate.__init__(self, self.cur)
 
   def add_customer(self):
     """
@@ -143,17 +146,20 @@ class db_functions(xAddCustomer,
     gets the customer with the lowest time_entry that's not yet in the que
     #get's the next recent one #well just to be safe, we'll query the heck out of this lol
     """
-    self.cur.execute("""select * from customers where customer_uuid not in (select cashier_q_cust_uuid from cashier_queue) ORDER BY customers_entry_time;""")
+    self.cur.execute("""select * from customers where customer_uuid not in (select cashier_q_cust_uuid from cashier_queue) ORDER BY customers_entry_time;""") #well, this returns none if all are inside the queing now so
     row = self.cur.fetchone()
-    return_me = {
-      'customers_id' : row[0],
-      'customers_entry_time' : row[1],
-      'customers_time_done' : row[2],
-      'customers_date': row[3],
-      'customers_served_by': row[4],
-      'customer_uuid' : row[5],
-      'customer_service_needed' : row[6]
-    }
+    try:
+      return_me = {
+        'customers_id' : row[0],
+        'customers_entry_time' : row[1],
+        'customers_time_done' : row[2],
+        'customers_date': row[3],
+        'customers_served_by': row[4],
+        'customer_uuid' : row[5],
+        'customer_service_needed' : row[6]
+      }
+    except:
+      return_me = None
     return(return_me)
   
   def get_least_loaded_cashier(self):
@@ -173,6 +179,22 @@ class db_functions(xAddCustomer,
     cashier_pool = sorted(cashier_pool, key=itemgetter(1))  
     
     return cashier_pool
+
+  def get_customer_service_time(self, customer_uuid):
+    self.cur.execute("""select customer_service_needed from customers where customer_uuid='{0}'""".format(customer_uuid))
+    return self.cur.fetchone() 
+
+  def cashier_work(self, cashier_uuid, customer_uuid, current_time):
+    #get the working time first if it's 1, close transaction
+    service_time = self.get_customer_service_time(customer_uuid)
+    if service_time == 1:
+      self.close_transaction(cashier_uuid,customer_uuid,current_time) 
+    else: #well if it ain't one then
+      self.cur.execute(""" UPDATE customers SET customer_service_needed={0} WHERE customer_uuid='{1}'""".format( int(service_time -1 ), str(customer_uuid) ))
+
+  def get_cashiers_that_have_people_in_line(self): #goddamn that function name was longer than I thought lol
+    self.cur.execute('select DISTINCT cashier_q_cashier_uuid from cashier_queue')
+    return self.cur.fetchall()
 
 if __name__ == "__main__":
   x = db_functions()
