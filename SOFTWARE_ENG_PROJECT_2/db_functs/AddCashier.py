@@ -8,10 +8,11 @@ class xAddCashier:
     def generate_cashier(self):
         payload = """
         INSERT INTO `cashier` (cashier_uuid, cashier_people_served)
-        VALUES
-        ('Nobody', 0)
-        """
+        VALUES ('{0}', 0)
+        """.format(str(uuid.uuid4()))
         self.cur.execute(payload)
 
         #print('Imported "add customer"')
         self.db.commit() #ignore the error since it'll run (main db functs is using this to put stuff in the db)
+
+
