@@ -11,11 +11,11 @@ class xErradicator:
         Things are beautiful because they have endings,
         We all die in the end ):)
         """
-        self.cur.execute("SHOW TABLES")
+        #self.cur.execute("SHOW TABLES")
         
-        tables = self.cur.fetchall()
+        tables = ['cashier_queue','customers', 'cashier']#self.cur.fetchall()
+
         for table in tables:
-            print(type(table[0]))
-            self.cur.execute("delete from {0}".format(table[0]))
+            self.cur.execute("delete from {0}".format(table))
         self.db.commit() 
         #pasensya gid, kinanglan ko lg mag una anay subong.
