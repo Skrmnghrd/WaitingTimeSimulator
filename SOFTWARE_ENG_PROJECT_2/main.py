@@ -7,24 +7,30 @@ sys.path.insert(0, "simulator")
 from main_db_functs__ import db_functions
 from Simulate import xSimulate
 
+
+#please remember to convert the time into seconds
+
 db = MySQLdb.connect(host='localhost',
                     user='root',
                     password='talablasani',
                     db='software_project_two')
 cur = db.cursor() 
-
+time=(28800,61200)
 x = db_functions(\
-waiting_time=(2,5), 
-cashiers=2, 
-customers=5, 
-time=(840,1200)
-)
+waiting_time=(120,300), 
+cashiers=5, 
+customers=700, 
+time=(28800,61200)
+) #time will be converted into seconds for exact measurement 
+x.clear_database()
+x.clear_database()
 x.clear_database()
 x.add_cashier()
 x.add_customer()
 cur = db.cursor()
 y = xSimulate(cur)
-y.commence_simulation()
+print('Simulating! Please wait!')
+y.commence_simulation(time[0], time[1])
 #x.que_customer('b0365ac8-9ff0-40a0-8b90-faee5adebd4e', 'af5d9016-a913-442f-98eb-ca2e015b66fc')
 
 """cashier = 'ddc1f831-19ca-493e-b140-91980924460c'

@@ -19,7 +19,7 @@ class xAddCustomer:
         }"""
 
         #don't use dict keys since they're not sorted so you get random values lol
-        self.cur.execute("insert into customers (customers_entry_time,customers_time_done,customer_uuid,customer_service_needed) VALUES ({0},0,'{1}',{2})".format(\
+        self.cur.execute("insert into customers (customers_entry_time,customers_time_done,customer_uuid,customer_service_needed, DO_NOT_TOUCH_FOR_REFERENCE_ONLY_customer_service_needed) VALUES ({0},0,'{1}',{2},{2})".format(\
         random.randint( self.operating_time[0], (self.operating_time[1]) ), 
         str(uuid.uuid4()), 
         random.randint(self.waiting_time[0], self.waiting_time[1] ) ) )#.format(random.randint(481,1020), 0,0,'Nobody' ,random.randint(2, 6) )) 

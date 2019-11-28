@@ -119,7 +119,7 @@ class db_functions(xAddCustomer,
   def que_customer(self, cashier_uuid, customer_uuid):
     """cashier_uuid, and cust_uuid"""
     self.load_customer(cashier_uuid, customer_uuid)
-    print('customer q-ed')
+    #print('customer q-ed')
 
   def clear_database(self):
     """
@@ -135,39 +135,27 @@ class db_functions(xAddCustomer,
   #=========================================================================================================
   #db functs for Generator, can be accessed without passing an arg to the init :>
   def close_transaction(self, cashier_uuid, customer_uuid, current_time):
-
+    #throws an error over here when the transaction ends :> please fix, your'er almost there
     self.end_transaction(cashier_uuid, customer_uuid, current_time)
-    print('Transaction Closed')
+    #print('Transaction Closed')
 
 
 
-  def get_lowest_cust(self):
+  def get_lowest_cust(self, current_time):
     """
     gets the customer with the lowest time_entry that's not yet in the que
     #get's the next recent one #well just to be safe, we'll query the heck out of this lol
     """
-    self.cur.execute("""select * from customers where customer_uuid not in (select cashier_q_cust_uuid from cashier_queue) ORDER BY customers_entry_time;""") #well, this returns none if all are inside the queing now so
-    row = self.cur.fetchone()
-    try:
-      return_me = {
-        'customers_id' : row[0],
-        'customers_entry_time' : row[1],
-        'customers_time_done' : row[2],
-        'customers_date': row[3],
-        'customers_served_by': row[4],
-        'customer_uuid' : row[5],
-        'customer_service_needed' : row[6]
-      }
-    except:
-      return_me = None
-    return(return_me)
+    self.cur.execute("""select * from customers where customers_entry_time <= {0} and customer_uuid not in (select cashier_q_cust_uuid from cashier_queue) and customer_service_needed != 0 ORDER BY customers_entry_time;""".format( int(current_time)) ) #well, this returns none if all are inside the queing now so
+    row = self.cur.fetchall()
+    return(row)
   
   def get_least_loaded_cashier(self):
     """Returns a list of list with the number of customers on each of the cashiers queue
     """
     self.cur.execute("""select cashier_uuid from cashier""")
     cashier_pool = self.cur.fetchall()
-    cashier_pool = [list(x) for x in cashier_pool]
+    cashier_pool = [list(x) for x in cashier_pool] #lists of cashiers
     for index, cashier_uuid in enumerate(cashier_pool):
       
       self.cur.execute(""" select count(*) from cashier_queue where cashier_q_cashier_uuid='{0}' """.format(cashier_uuid[0]))
@@ -176,7 +164,7 @@ class db_functions(xAddCustomer,
         cashier_pool[index].append(0)
       cashier_pool[index].append(count[0])
       
-    cashier_pool = sorted(cashier_pool, key=itemgetter(1))  
+    cashier_pool = sorted(cashier_pool, key=itemgetter(1))  #returns the first guy that has the lowest peopl in the q
     
     return cashier_pool
 
@@ -184,12 +172,25 @@ class db_functions(xAddCustomer,
     self.cur.execute("""select customer_service_needed from customers where customer_uuid='{0}'""".format(customer_uuid))
     return self.cur.fetchone() 
 
-  def cashier_work(self, cashier_uuid, customer_uuid, current_time):
+  def cashier_work(self, cashier_uuid, current_time):
     #get the working time first if it's 1, close transaction
-    service_time = self.get_customer_service_time(customer_uuid)
+
+    get_the_customer_being_served= """select customer_uuid FROM customers WHERE customer_uuid in (select cashier_q_cust_uuid from cashier_queue where cashier_q_cashier_uuid='{0}') ORDER BY customers_entry_time LIMIT 1""".format(cashier_uuid[0])
+    #somethign wrong over here
+    #only returns the first customer, explains why the customer doesn't change
+    
+    self.cur.execute(get_the_customer_being_served)
+    customer_uuid = self.cur.fetchall() #error over here
+    #customer uuid is actually the whole row
+    #please edit #go to sleep
+    customer_uuid = customer_uuid[0][0]
+     
+    service_time = self.get_customer_service_time(customer_uuid)[0]
+    
     if service_time == 1:
       self.close_transaction(cashier_uuid,customer_uuid,current_time) 
     else: #well if it ain't one then
+      #error now is over here lol I just woke up niggguhhhs!
       self.cur.execute(""" UPDATE customers SET customer_service_needed={0} WHERE customer_uuid='{1}'""".format( int(service_time -1 ), str(customer_uuid) ))
 
   def get_cashiers_that_have_people_in_line(self): #goddamn that function name was longer than I thought lol
@@ -197,7 +198,7 @@ class db_functions(xAddCustomer,
     return self.cur.fetchall()
 
 if __name__ == "__main__":
-  x = db_functions()
+  #x = db_functions()
   pass
 
 
