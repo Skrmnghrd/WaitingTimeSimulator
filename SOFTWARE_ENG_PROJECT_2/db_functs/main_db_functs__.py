@@ -102,6 +102,22 @@ class db_functions(xAddCustomer,
     
     print("Cashier Added")
 
+  def get_table_names(self):
+    """
+    won't try to put this on another file since I don't have much time now :> it's gonna be thanks giving tomorrow 
+    """
+
+    self.cur.execute("SHOW TABLES")
+    return(self.cur.fetchall())
+
+
+  def fetch_table_columns(self, table):
+
+    self.cur.execute("DESCRIBE {}".format(table))
+    
+    return([x[0] for x in self.cur.fetchall()])
+
+
   def get_customers(self):
     """
     gets the customer $select * from cust order by entry time
@@ -197,6 +213,10 @@ class db_functions(xAddCustomer,
     self.cur.execute('select DISTINCT cashier_q_cashier_uuid from cashier_queue')
     return self.cur.fetchall()
 
+
+
+  def import_sql_to_database(self):
+    pass
 if __name__ == "__main__":
   #x = db_functions()
   pass

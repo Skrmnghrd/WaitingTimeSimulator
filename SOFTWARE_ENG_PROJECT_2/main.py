@@ -3,12 +3,11 @@ import MySQLdb
 #custom import paths
 sys.path.insert(0, "db_functs")
 sys.path.insert(0, "simulator")
+sys.path.insert(0, "visualizer")
 #ignore the errors if you're using an IDE, it'll run juzzz fine :>
 from main_db_functs__ import db_functions
 from Simulate import xSimulate
-
-
-#please remember to convert the time into seconds
+from main_visualize import visualize
 
 db = MySQLdb.connect(host='localhost',
                     user='root',
@@ -22,6 +21,9 @@ cashiers=5,
 customers=700, 
 time=(28800,61200)
 ) #time will be converted into seconds for exact measurement 
+
+z = visualize()
+"""
 x.clear_database()
 x.clear_database()
 x.clear_database()
@@ -29,35 +31,15 @@ x.add_cashier()
 x.add_customer()
 cur = db.cursor()
 y = xSimulate(cur)
+
+
 print('Simulating! Please wait!')
 y.commence_simulation(time[0], time[1])
-#x.que_customer('b0365ac8-9ff0-40a0-8b90-faee5adebd4e', 'af5d9016-a913-442f-98eb-ca2e015b66fc')
-
-"""cashier = 'ddc1f831-19ca-493e-b140-91980924460c'
-customers = ['1c19947e-f3cb-4e48-b876-a8d09988b5f8','e502f26a-4b47-4e8e-819f-86ee917def23','150631f5-4113-419c-8bb0-86280f99a31c']
-
-for things in customers:
-    x.que_customer(cashier, things)
-
-print(x.get_cashiers())
-print(x.get_customers())"""
-
-
 """
+#z.sql_to_data_frame(x.get_customers(), 
+#print(x.fetch_table_columns("customers"))
+Dframe = z.sql_to_data_frame(x.get_customers(), x.fetch_table_columns("customers"))
+#z.save_data_frame_to_csv(Dframe, 'test.csv')
+#print(Dframe['customers_waiting_time'].notnull())
+z.data_frame_to_distplot(Dframe)
 
-WElcome to the trash bin
-
-where our deepest thoughts 
-and our arrid feelings lay down on a sea of sorrow
-
-
-
-
-
-#sa generator na sa dapat mamangkot sang muni na args, tandai nga ang sa db funcs dapat function lg sa db ang hmuon ya, 
-#sa generator, or redundant na ang generator? sa simulate ma dalagan ang increment sang time kag ang kuha kuha sang mga enteties, sooo. dira na lg guro mamangkot sa simulator,
-#ah get's ko na, ang sa generator, dira sa ma for loop kng pila gid man kinanglan mo
-#generate()
-#simulate() and that's it
-#get data
-"""
