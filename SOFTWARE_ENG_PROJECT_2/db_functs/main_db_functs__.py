@@ -89,7 +89,7 @@ class db_functions(xAddCustomer,
     """
     
     
-    for i in range(self.customers):
+    for i in range(random.randrange(self.customers[0], self.customers[1])):
       self.generate_customer()
     print('Customer Added')
     
@@ -203,8 +203,26 @@ class db_functions(xAddCustomer,
      
     service_time = self.get_customer_service_time(customer_uuid)[0]
     
-    if service_time == 1:
-      self.close_transaction(cashier_uuid,customer_uuid,current_time) 
+    if (service_time - 1) < 1: #means its 0.01 - 0.99
+      #change this to 
+      #service_time is -1 is less than 1 but not 0 then
+      #wait for it to close then
+
+      #get the customer being served on your queue if exists
+      #deduc the remaining time from him if get the customer_being served is not none
+
+      self.close_transaction(cashier_uuid,customer_uuid,current_time)
+      self.cur.execute(get_the_customer_being_served)
+      check_q = self.cur.fetchall()
+
+      if check_q is not None:
+
+        customer_uuid = self.cur.fetchall()
+        customer_uuid = customer_uuid
+
+        self.cur.execute(""" UPDATE customers SET customer_service_needed={0} WHERE customer_uuid='{1}'""".format( int(service_time -1 ), str(customer_uuid) ))
+
+
     else: #well if it ain't one then
       #error now is over here lol I just woke up niggguhhhs!
       self.cur.execute(""" UPDATE customers SET customer_service_needed={0} WHERE customer_uuid='{1}'""".format( int(service_time -1 ), str(customer_uuid) ))
@@ -217,6 +235,10 @@ class db_functions(xAddCustomer,
 
   def import_sql_to_database(self):
     pass
+
+  def check_null(self):
+    self.cur.execute('select DISTINCT cashier_q_cashier_uuid from cashier_queue')
+    return self.cur.fetchall()
 if __name__ == "__main__":
   #x = db_functions()
   pass

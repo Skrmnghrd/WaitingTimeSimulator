@@ -22,15 +22,15 @@ class xSimulate(db_functions):
             thread.start()
         """
     
-        while time_open <= closing_time:
-            print(time_open)
+        while time_open <= closing_time or len(self.check_null()) != 0:
+            #print(time_open)
             #diri ni sa dapat ma loop. nd mag loop sa time_open kada while
 
             next_cust = self.get_lowest_cust(time_open) 
             #gets all the customers thats equal or greater time open
             time_open += 1 
 
-
+            #print(next_cust[7])
             if next_cust is not None: #if it's time for the customer to be in line
                 #sulod sa q
                 for next_cust_in_line in next_cust:

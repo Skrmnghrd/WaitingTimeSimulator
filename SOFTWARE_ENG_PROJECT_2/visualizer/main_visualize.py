@@ -22,10 +22,10 @@ class visualize():
         print('saved')
         #would need to get the columns dynamically but here's a fixed one for now 
         #describe table, and shove it up columns
-    def data_frame_to_distplot(self, dataframe):
+    def data_frame_to_distplot(self, dataframe, num_of_cashiers):
         
         plt.rcParams["patch.force_edgecolor"] = True
-        customer_waiting_time = [(int(x) / 60 ) for x in dataframe['customers_waiting_time'].dropna() ]
+        customer_waiting_time = [(int(x) ) for x in dataframe['customers_waiting_time'].dropna() ]
         sns.set_style("dark")
         sns.set(color_codes=True)
         #customer_waiting_time = ( dataframe['customers_waiting_time'].dropna() * 60)
@@ -39,7 +39,7 @@ class visualize():
         #plt.ylim(0, len(customer_waiting_time)) #bad idea
         #plt.ylim(waiting_time_count.min(), waiting_time_count.max())
         plt.xlabel('Customer Waiting Time in Minutes')
-        plt.ylabel('Customer Waiting Time in Minutes')
-        plt.title("Waiting Time with x Number of Cashiers")
+        plt.ylabel('Number of Customers')
+        plt.title("Waiting Time with {} Number of Cashiers".format(num_of_cashiers))
         plt.savefig('Distplot.png')
         plt.show()
