@@ -212,9 +212,9 @@ class db_functions(xAddCustomer,
 
       #get the customer being served on your queue if exists
       #deduc the remaining time from him if get the customer_being served is not none
-      print('servtime = :' + str(service_time))
-      current_time += service_time
-      print('current_time = :' + str(current_time))
+      #print('servtime = :' + str(service_time))
+      current_time += (service_time - 1)
+      #print('current_time = :' + str(current_time))
        #where service time is a decimal or flaot or service time is 1
       self.close_transaction(cashier_uuid,customer_uuid,current_time)
       self.cur.execute(get_the_customer_being_served)

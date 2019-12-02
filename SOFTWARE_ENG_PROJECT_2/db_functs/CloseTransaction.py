@@ -33,7 +33,7 @@ class xCloseTransaction:
         #print(cust_entry_time)
         #print('pre total wait time ' + str(total_waiting_time))
         total_waiting_time = (cust_time_done - cust_entry_time)
-        print('POST total wait time ' + str(total_waiting_time))
+        #print('POST total wait time ' + str(total_waiting_time))
         x = """ UPDATE customers SET customers_waiting_time={0} where customer_uuid='{1}'""".format(total_waiting_time, str(customer_uuid)) #float err over here
         
         #print(customer_uuid)
