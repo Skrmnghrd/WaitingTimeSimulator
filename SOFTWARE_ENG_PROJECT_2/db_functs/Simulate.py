@@ -22,7 +22,8 @@ class xSimulate(db_functions):
             thread.start()
         """
     
-        while time_open <= closing_time or len(self.check_null()) != 0:
+        while time_open <= closing_time or len(self.check_null()) != 0: #could cancel the time open but for
+        #documentation purposes in the future, we could put a table named (waiting after closing time)
             #print(time_open)
             #diri ni sa dapat ma loop. nd mag loop sa time_open kada while
 

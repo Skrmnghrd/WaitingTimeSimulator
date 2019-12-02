@@ -29,10 +29,12 @@ max_waiting_time = int(input("Please enter the MAXXXXIMUM waiting time: "))
 cashiers = int(input("Please enter number of cashiers: "))
 min_customers = int(input("Please enter minimum number of customers: "))
 max_customers = int(input("Please enter maximum number of customers: "))
+
 customers = (min_customers, max_customers)
 waiting_time = (min_waiting_time, max_waiting_time)
 
-csv_name = str(input("please enter csv name"))
+csv_name = str(input("please enter csv name: "))
+dist_plot_name = str(input("Please enter the bar graphs name: "))
 x = db_functions(\
 waiting_time=waiting_time, 
 cashiers=cashiers, 
@@ -60,5 +62,5 @@ Dframe = z.sql_to_data_frame(x.get_customers(), x.fetch_table_columns("customers
 
 z.save_data_frame_to_csv(Dframe, csv_name)
 #print(Dframe['customers_waiting_time'].notnull())
-z.data_frame_to_distplot(Dframe, cashiers)
+z.data_frame_to_distplot(Dframe, cashiers, dist_plot_name, customers, waiting_time)
 

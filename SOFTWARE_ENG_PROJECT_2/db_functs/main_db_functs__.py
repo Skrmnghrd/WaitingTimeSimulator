@@ -203,29 +203,46 @@ class db_functions(xAddCustomer,
      
     service_time = self.get_customer_service_time(customer_uuid)[0]
     
-    if (service_time - 1) < 1: #means its 0.01 - 0.99
+    print('SERVICE TIME UNTOUCHED: ' + str(service_time))
+
+    if (((service_time - 1) < 1 and (service_time - 1) > 0 ) or (service_time -1 == 0)) or (service_time > 0 and service_time < 1): #means its 0.01 - 0.99
       #change this to 
       #service_time is -1 is less than 1 but not 0 then
       #wait for it to close then
 
       #get the customer being served on your queue if exists
       #deduc the remaining time from him if get the customer_being served is not none
-
+      print('servtime = :' + str(service_time))
+      current_time += service_time
+      print('current_time = :' + str(current_time))
+       #where service time is a decimal or flaot or service time is 1
       self.close_transaction(cashier_uuid,customer_uuid,current_time)
       self.cur.execute(get_the_customer_being_served)
       check_q = self.cur.fetchall()
 
-      if check_q is not None:
+      if len(check_q) != 0: #if there's no one in the q, don't pass the remaining float numbers to the next person
+      #wala tao sa linya, what can u xpect right? lol
+        if service_time > 1:
+          customer_uuid = self.cur.fetchall()
+          customer_uuid = customer_uuid
 
-        customer_uuid = self.cur.fetchall()
-        customer_uuid = customer_uuid
+          self.cur.execute(""" UPDATE customers SET customer_service_needed=(customer_service_needed - {0}) WHERE customer_uuid='{1}'""".format((service_time -1 ), str(customer_uuid) ))
+          self.db.commit()
 
-        self.cur.execute(""" UPDATE customers SET customer_service_needed={0} WHERE customer_uuid='{1}'""".format( int(service_time -1 ), str(customer_uuid) ))
+        else:
+          customer_uuid = self.cur.fetchall()
+          customer_uuid = customer_uuid
+
+          self.cur.execute(""" UPDATE customers SET customer_service_needed=(customer_service_needed - {0}) WHERE customer_uuid='{1}'""".format((service_time), str(customer_uuid) ))
+          self.db.commit()
+
 
 
     else: #well if it ain't one then
       #error now is over here lol I just woke up niggguhhhs!
-      self.cur.execute(""" UPDATE customers SET customer_service_needed={0} WHERE customer_uuid='{1}'""".format( int(service_time -1 ), str(customer_uuid) ))
+      self.cur.execute(""" UPDATE customers SET customer_service_needed={0} WHERE customer_uuid='{1}'""".format( (service_time -1 ), str(customer_uuid) ))
+      #THIRTY FREAKING MINUTES OF LOOKING FOR THAT (INT UP THERE) #was wondering why it's not floating
+      self.db.commit()
 
   def get_cashiers_that_have_people_in_line(self): #goddamn that function name was longer than I thought lol
     self.cur.execute('select DISTINCT cashier_q_cashier_uuid from cashier_queue')

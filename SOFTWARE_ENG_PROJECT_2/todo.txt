@@ -1,0 +1,5 @@
+GUI - Flask
+DONE === Fix db, to float for more accuracy ===
+AJAX so it's cool
+USE CASE
+SUNNY AND RAINY
