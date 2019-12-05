@@ -1,0 +1,27 @@
+CREATE TABLE `cashier` (
+  `cashier_id` INTEGER  PRIMARY KEY AUTOINCREMENT,
+  `cashier_uuid` varchar(255) DEFAULT NULL UNIQUE,
+  `cashier_people_served` int(11) DEFAULT NULL
+);
+
+CREATE TABLE `customers` (
+  `customers_id` INTEGER  PRIMARY KEY AUTOINCREMENT,
+  `customers_entry_time` int(11) DEFAULT NULL,
+  `customers_time_done` float(11) DEFAULT NULL,
+  `customers_date` timestamp,
+  `customer_uuid` varchar(255) DEFAULT NULL UNIQUE,
+  `customers_served_by` varchar(255) DEFAULT NULL,
+  `customer_service_needed` float(11) DEFAULT NULL,
+  `DO_NOT_TOUCH_FOR_REFERENCE_ONLY_customer_service_needed` int(11) DEFAULT NULL,
+  `customers_waiting_time` float(11) DEFAULT NULL,
+  CONSTRAINT  `customers_served_by` FOREIGN KEY (customers_served_by) REFERENCES cashier(cashier_uuid)
+);
+
+CREATE TABLE `cashier_queue` (
+  `cashier_q_id` INTEGER  PRIMARY KEY AUTOINCREMENT,
+  `cashier_q_cashier_uuid` varchar(255) DEFAULT NULL,
+  `cashier_q_cust_uuid` varchar(255) DEFAULT NULL UNIQUE,
+  `cashier_q_service_needed` float(11) DEFAULT NULL,
+  CONSTRAINT  `cashier_q_cashier_uuid` FOREIGN KEY (cashier_q_cashier_uuid) REFERENCES cashier(cashier_uuid),
+  CONSTRAINT  `cashier_q_cust_uuid` FOREIGN KEY (cashier_q_cust_uuid) REFERENCES customers(customer_uuid)
+);
