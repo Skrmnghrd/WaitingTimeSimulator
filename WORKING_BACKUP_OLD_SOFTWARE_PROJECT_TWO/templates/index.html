@@ -1,0 +1,155 @@
+{% extends 'layout.html' %}
+
+{%- block body %} 
+<center>
+<h1> :> </h1>
+<script>
+/*
+     $.getJSON('_refresh', function(data)
+     {
+ 				var clear_us = ['files'];
+ 					clear_us.map( function(item) 
+ 					{
+ 						var clear_me = document.getElementById(item);
+ 						while (clear_me.firstChild) 
+ 						{
+ 							
+ 							clear_me.removeChild(clear_me.firstChild);
+ 						}
+ 					});
+ 
+        for (var keys in data){
+           var test = data[keys]
+ 					
+           test['files_in_cwd'].map( function(item){
+           var node_files = document.createElement('a');
+           var textnode = document.createTextNode(item);
+						node_files.appendChild(textnode);
+					node_files.title = item;
+						node_files.href = Flask.url_for("_get_file", {"file_name": item});
+            document.getElementById("files").appendChild(node_files);
+          });
+        };
+    });
+
+    */
+//old test
+/*
+$(document).ready(function()
+{
+    $("#generate").on("click", function()
+    {
+        alert("Its working!!!");
+    });
+});
+*/
+
+/* Super unsafe and unrealiable, GUI for the app, it's just basic ajax and jsonification of things. 2 hours before the deadline.
+NOTE THIS IS NOT A REQUIREMENT BUT RATHER JUST FOR THE CONVENIENCE OF THE SO CALLED USER (incase he doesn't want to use the good ol cli*/
+function SendData()
+{
+    $.getJSON('/_test', 
+    {
+        min_time: document.getElementById("min_time").value,
+        max_time: document.getElementById("max_time").value,
+        
+        min_wait_time: document.getElementById("min_wait_time").value,
+        max_wait_time: document.getElementById("max_wait_time").value,
+        cashiers: document.getElementById("cashiers").value,
+
+        customer_min: document.getElementById("customer_min").value,
+        customer_max: document.getElementById("customer_max").value,
+
+        csv_name: document.getElementById("csv_name").value,
+        plot_name: document.getElementById("plot_name").value
+    }, function(data){
+        //var picture_div = document.getElementById('pictures_here');
+        //var image_elem = document.createElement('img');
+        //image_elem.setAttribute('name')
+        //image_elem.setAttribute('src', 'data:image/png;base64, ')
+        //document.getElementById('pictures_here').appendChild(image_elem);
+        //if only I had more time
+        //I spend like a whoel day doing math aassignments. I'm sorry
+        alert(data['response'])
+    }  
+
+    )};
+
+/*
+
+    document.getElementById("min_time").value;
+    document.getElementById("max_time").value;
+    document.getElementById("min_wait_time").value;
+    document.getElementById("max_wait_time").value;
+    document.getElementById("cashiers").value;
+    document.getElementById("customer_min").value;
+    document.getElementById("mycustomer_maxText").value;
+    document.getElementById("csv_name").value;
+    document.getElementById("plot_name").value;
+*/
+function ButtonDirChange(elem)
+			{	
+				
+				$.getJSON('/_change_dir',{directory: elem.value	},function(data)
+                {
+					var clear_us = ['directories','files', 'current_dir'];
+				});
+			};
+</script>
+
+<form method="POST" action="">
+    <H1>PLESE ENTER ALL THE TIME REQUIREMENTS IN MINUTES </H1>
+    <p>
+    <div class="form-group">
+        Time Opening in Minutes:{{form.min_time(class_='form-control')}}
+    </div>
+    <div class="form-group">
+        Time Closing in Minutes:{{form.max_time(class_='form-control')}} 
+    </div>
+    </p>
+
+    <div class="form-group">
+            <p>Minimum Waiting Time:{{form.min_wait_time(class_='form-control')}} </p>
+    </div>
+
+    <p>
+    <div class="form-group">
+            Maximum Waiting Time:{{form.max_wait_time(class_='form-control')}} </p>
+    </div>
+    </p>
+
+    <div class="form-group">
+        <p>Enter Number of Cashiers: {{form.cashiers(class_='form-control')}} </p>
+    </div>
+    <p>
+    <div class="form-group">
+        <p>Enter Minimum Number of Customers: {{form.customer_min(class_='form-control')}} </p> 
+    </div>
+    <div class="form-group">
+        <p>Enter Maximum Number of Customers:{{form.customer_max(class_='form-control')}} </p>
+    </div>
+    </p>
+
+    <div class="form-group">
+        <p> Enter CSV Name:{{form.csv_name(class_='form-control')}}</p>
+    </div>
+
+    <div class="form-group">
+        <p> Enter GRAPH Name:{{form.plot_name(class_='form-control')}}</p>
+    </div>
+
+
+    <p>
+        <input id="generate" type="button" value="generate", onclick="SendData()"/>
+    </p>
+</form>
+
+<div id="pictures_here">
+    
+</div>
+
+<div id="csv_area">
+    
+</div>
+</center>
+{% endblock %}
